@@ -1,11 +1,12 @@
 .dashboard {
     height: 42px;
-    color: rgb(9, 9, 9);
-    background-image: linear-gradient(to right, rgba(0,0,255,0), rgba(0,0,255,1));
+    color: rgb(253, 251, 251);
+    background-image: linear-gradient(to right, rgba(2, 2, 142, 0), rgb(1, 1, 154));
     border: 10px;
-    /* align-content: space-around;
-    justify-content: space-evenly;
-    align-items: center; */
+    font: bolder;
+    text-align: center;
+    font-size: 30px;
+   
 }
 
 .currentWeatherTitle {
