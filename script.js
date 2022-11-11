@@ -2,6 +2,7 @@ const APIKEY = 'addd896774748bd74c75435e0840431b';
 const TODAY = new Date().toLocaleDateString();
 var cityArray = [];
 
+
 // get locaion from Location API
 function getLatLon(search) {
     fetch('http://api.openweathermap.org/geo/1.0/direct?q=' + search + '&appid=' + APIKEY)
@@ -34,6 +35,23 @@ function getLatLon(search) {
         })
 
 }
+// clears/resets the fields for the cards/ headers when searching a diffrent city
+function reset() {
+    $('#currentCity').text('');
+    $('#currentDate').text('');
+    $('#currentTemp').text('');
+    $('#currentWind').text('');
+    $('#currentWeatherIcon > img').remove();
+    $('#currentHumidity').text('');
+    for (i = 0; i < 6; i++) {
+    $('#' + i + 'Temp').text('');
+    $('#' + i + 'Wind').text('');
+    $('#' + i + 'Humidity').text('');
+    $('#' + i + 'WeatherIcon > img').remove();
+    $('#' + i + 'Date').text('');
+   
+    }
+}
 // get weather from Weather API
 function getWeather(lat, lon) {
     fetch('https://api.openweathermap.org/data/3.0/onecall?lat=' + lat + '&lon=' + lon + '&appid=' + APIKEY)
@@ -46,10 +64,10 @@ function getWeather(lat, lon) {
             let formatWind = Math.round(data.current.wind_speed * 2.2369);
             let currentIconUrl = 'https://openweathermap.org/img/wn/'+ data.current.weather[0].icon +'@2x.png';
             // current temp (todays weather)
-            $('#currentTemp').append(formatTemp);
-            $('#currentWind').append(formatWind);
+            $('#currentTemp').append('Temp: ' + formatTemp + '°F');
+            $('#currentWind').append('Wind: ' + formatWind + ' MPH');
             $('#currentWeatherIcon').append("<img src='"+ currentIconUrl + "' height='64px'>");
-            $('#currentHumidity').append(data.current.humidity);
+            $('#currentHumidity').append('Humidity: ' + data.current.humidity + '%');
             // 6 day forcast, looks better than the 5 day version
             console.log(data + "daily temps");
             for (i = 0; i < 6; i++) {
@@ -85,17 +103,15 @@ function retrieveLocalStorage() {
 // // main process
 
 $(document).ready(function () {
-    // window.onload = function () {
     retrieveLocalStorage();
-    console.log(cityArray + "onload");
-    // }
-
-    // retrieveLocalStorage();
+    
     for (i = 0; i < cityArray.length; i++) {
         $("#" + cityArray[i]).onclick = function () {
             city = cityArray[i];
             console.log(city);
+            reset();
             getLatLon(city);
+        
         }
     }
     console.log($(citySearch));
@@ -103,7 +119,9 @@ $(document).ready(function () {
     submitCity.onclick = function () {
         city = $('#citySearch').val();
         console.log(city);
+        reset();
         getLatLon(city);
+       
     }
 
 
