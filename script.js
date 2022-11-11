@@ -24,7 +24,7 @@ function getLatLon(search) {
 
             }
             // add to local storage
-            localStorage.setItem('city', JSON.stringify(cityArray));
+            localStorage.setItem('city',cityArray.toString());
             var location = {
                 lat: data[0].lat,
                 lon: data[0].lon
@@ -39,25 +39,32 @@ function getWeather(lat, lon) {
     fetch('https://api.openweathermap.org/data/3.0/onecall?lat=' + lat + '&lon=' + lon + '&appid=' + APIKEY)
         .then((response) => response.json())
         .then((data) => {
-            console.log(data.daily[0]);
+            console.log(data);
             // temp is in Kelvin, needs to be converted to Ferinheight
             let tempF = ((data.current.temp - 273.15) * 1.8) + 32;
             let formatTemp = Math.round(tempF * 100) / 100;
+            let formatWind = Math.round(data.current.wind_speed * 2.2369);
+            let currentIconUrl = 'https://openweathermap.org/img/wn/'+ data.current.weather[0].icon +'@2x.png';
             // current temp (todays weather)
             $('#currentTemp').append(formatTemp);
-            $('#currentWind').append(data.current.wind_speed);
+            $('#currentWind').append(formatWind);
+            $('#currentWeatherIcon').append("<img src='"+ currentIconUrl + "' height='64px'>");
             $('#currentHumidity').append(data.current.humidity);
             // 6 day forcast, looks better than the 5 day version
             console.log(data + "daily temps");
             for (i = 0; i < 6; i++) {
-             
+                var forcastDay=parseInt(data.daily[i].dt) * 1000;
+                console.log(moment(forcastDay).format("MMM Do YY"));
                 let dailyTempF = ((data.daily[i].temp.max - 273.15) * 1.8) + 32;
                 let formatDailyTemp = Math.round(dailyTempF * 100) / 100;
                 let forcast = new Date(data.daily[i].dt).toLocaleDateString();
+                let iconUrl = 'https://openweathermap.org/img/wn/'+ data.daily[i].weather[0].icon +'@2x.png';
+                let formatDailyWind = Math.round(data.daily[i].wind_speed * 2.2369);
                 $('#' + i + 'Temp').append(formatDailyTemp);
-                $('#' + i + 'Wind').append(data.daily[i].wind_speed);
+                $('#' + i + 'Wind').append(formatDailyWind);
                 $('#' + i + 'Humidity').append(data.daily[i].humidity);
-                $('#' + i + 'Date').append(forcast);
+                $('#' + i + 'WeatherIcon').append("<img src='"+ iconUrl + "' height='64px'>")
+                $('#' + i + 'Date').append(moment(forcastDay).format("MMM Do YY"));
             }
         })
 
@@ -66,8 +73,8 @@ function getWeather(lat, lon) {
 // get cities from local storage
 function retrieveLocalStorage() {
     var myCitys = localStorage.getItem('city');
-    let cityArray = myCitys.split(',');
-    console.log('myCitys' + typeof (cityArray));
+    cityArray = myCitys.split(',');
+    console.log('myCitys' + cityArray);
     for (i = 0; i < cityArray.length; i++) {
         console.log(cityArray[i]);
         var cityButton = '<button id="' + cityArray[i] + '" type="button" class="btn btn-secondary">' + cityArray[i] + '</button></br></br>'
@@ -79,17 +86,17 @@ function retrieveLocalStorage() {
 
 $(document).ready(function () {
     // window.onload = function () {
-        retrieveLocalStorage();
-        console.log(cityArray + "onload");
+    retrieveLocalStorage();
+    console.log(cityArray + "onload");
     // }
 
     // retrieveLocalStorage();
     for (i = 0; i < cityArray.length; i++) {
-    $("#" + cityArray[i]).onclick = function () {
-        city = cityArray[i];
-        console.log(city);
-        getLatLon(city);
-    }
+        $("#" + cityArray[i]).onclick = function () {
+            city = cityArray[i];
+            console.log(city);
+            getLatLon(city);
+        }
     }
     console.log($(citySearch));
     var city;
