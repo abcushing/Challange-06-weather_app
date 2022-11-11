@@ -8,8 +8,9 @@ function getLatLon(search) {
     fetch('http://api.openweathermap.org/geo/1.0/direct?q=' + search + '&appid=' + APIKEY)
         .then((response) => response.json())
         .then((data) => {
+
             console.log(TODAY)
-            console.log(data[0])
+            console.log(data, 'dump stuff')
             // capitalize the city if not capitalized in search
             var city = search.toLowerCase();
             var cityName = city.replace(city[0], city[0].toUpperCase());
@@ -22,8 +23,14 @@ function getLatLon(search) {
 
                 cityArray.push(cityName);
                 console.log('something else' + cityArray);
+                var cityButton = '<button id="' + cityName + '" type="button" class="btn btn-secondary" onclick="start(\'' + cityName.trim() + '\')">' + cityName + '</button></br></br>'
+                console.log(cityButton);
+                $('#cityButtons').append(cityButton);
 
             }
+           
+   
+            
             // add to local storage
             localStorage.setItem('city', cityArray.toString());
             var location = {
@@ -32,6 +39,7 @@ function getLatLon(search) {
             }
             console.log(location);
             getWeather(data[0].lat, data[0].lon,);
+
         })
 
 }
@@ -90,15 +98,17 @@ function getWeather(lat, lon) {
 
 // get cities from local storage, make buttons
 function retrieveLocalStorage() {
-    var myCitys = localStorage.getItem('city');
-    cityArray = myCitys.split(',');
+    if (localStorage.getItem('city')) {
+        var myCitys = localStorage.getItem('city');
+        cityArray = myCitys.split(',');
+    }
+    console.log(myCitys, "stuff it");
     console.log('myCitys' + cityArray);
     for (i = 0; i < cityArray.length; i++) {
         console.log(cityArray[i]);
         var cityButton = '<button id="' + cityArray[i] + '" type="button" class="btn btn-secondary" onclick="start(\'' + cityArray[i].trim() + '\')">' + cityArray[i] + '</button></br></br>'
         console.log(cityButton);
         $('#cityButtons').append(cityButton);
-        // $("#" + cityArray[i]).click(start(cityArray[i]));
 
     }
 }
@@ -106,31 +116,14 @@ function retrieveLocalStorage() {
 function start(city) {
     reset();
     getLatLon(city);
+
 }
 // // main process
 
 $(document).ready(function () {
     retrieveLocalStorage();
-
-    // for (i = 0; i < cityArray.length; i++) {
-    //     $("#" + cityArray[i]).onclick = function () {
-    //         city = cityArray[i];
-    //         console.log(city);
-    //         reset();
-    //         getLatLon(city);
-
-    //     }
-    // }
-
-    // $("#Boston").onclick = function () {
-    //     city = 'Boston';
-    //     console.log(city);
-    //     reset();
-    //     getLatLon(city);
-
-    // }
-
     console.log($(citySearch));
+    console.log(city, submitCity, citySearch, cityArray)
     var city;
     submitCity.onclick = function () {
         city = $('#citySearch').val();
