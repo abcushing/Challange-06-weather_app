@@ -5,7 +5,7 @@ var cityArray = [];
 
 // get locaion from Location API
 function getLatLon(search) {
-    fetch('http://api.openweathermap.org/geo/1.0/direct?q=' + search + '&appid=' + APIKEY)
+    fetch('https://api.openweathermap.org/geo/1.0/direct?q=' + search + '&appid=' + APIKEY)
         .then((response) => response.json())
         .then((data) => {
 
